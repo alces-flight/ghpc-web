@@ -1,0 +1,13 @@
+####################### Banner #########################
+style: "style2 orient-left content-align-left image-position-right fullscreen onload-image-fade-in onload-content-fade-right"
+title : "GHPC Project"
+subtitle: |
+  An HPC/AI stack deployment built on open methodologies
+content : |
+  GHPC is the core of Alces HPC/AI Stack Deployments.
+  Built on open tools and methodologies it is essential that GHPC gives back to the communities and industry that helped bring it together. The software and documentation here delivers everything needed to spin up a GHPC and customise it for your use case.
+button:
+  label : "Learn More"
+  link : "#learn"
+image : "images/banner.jpg"
+

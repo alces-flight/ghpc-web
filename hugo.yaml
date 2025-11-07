@@ -1,0 +1,20 @@
+title: "GHPC Project"
+copyright: "{year}"
+theme: hugo-story
+relativeURLs: "true"
+baseURL: /
+publishDir: public
+disableKinds:
+  - taxonomy
+  - section
+Params:
+  version: "v1.2"
+  description: "An HPC/AI stack deployment built on open methodologies"
+  logo: images/banner.jpg
+  favicon: false
+  social: {}
+  asset:
+    fontawesome_css:
+      - css/fontawesome-all.min.css
+    fontawesome_js:
+      - js/fontawesome-all.min.js
