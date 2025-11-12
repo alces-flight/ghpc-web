@@ -25,10 +25,7 @@ mkdir -p $(dirname $VM_IMAGE)
 cp /data/ghpc-source/director-root.qcow2 $VM_IMAGE
 cp /data/ghpc-source/director-data.qcow2 $DATA_IMAGE
 
-VM_IMAGE_FORMAT=$(qemu-img info ${VM_IMAGE} | grep "^file format" | cut -d':' -f2 | xargs)
-DATA_IMAGE_FORMAT=$(qemu-img info ${DATA_IMAGE} | grep "^file format" | cut -d':' -f2 | xargs)
-
-virt-install --name=${VM_HOSTNAME} --boot uefi --ram=2048 --vcpus=1 --import --disk path=${VM_IMAGE},format=${VM_IMAGE_FORMAT} --disk path=${DATA_IMAGE},format=${DATA_IMAGE_FORMAT} --os-variant=rhel9.4 --network bridge=${NET_ETH0},model=virtio --network bridge=${NET_ETH1},model=virtio --graphics vnc,listen=0.0.0.0 --noautoconsole
+virt-install --name=${VM_HOSTNAME} --boot uefi --ram=2048 --vcpus=1 --import --disk path=${VM_IMAGE},format=qcow2 --disk path=${DATA_IMAGE},format=qcow2 --os-variant=rhel9.4 --network bridge=${NET_ETH0},model=virtio --network bridge=${NET_ETH1},model=virtio --graphics vnc,listen=0.0.0.0 --noautoconsole
             </code>
             </pre>
             <li>Launch Domain (requires at least 2 cores and 4GB RAM)</li>
@@ -42,9 +39,7 @@ NET_ETH0=virbr3 # Host Bridge interface for Domain Network
 
 cp /data/ghpc-source/domain-root.qcow2 $VM_IMAGE
 
-VM_IMAGE_FORMAT=$(qemu-img info ${VM_IMAGE} | grep "^file format" | cut -d':' -f2 | xargs)
-
-virt-install --name=${VM_HOSTNAME} --boot uefi --ram=4096 --vcpus=2 --import --disk path=${VM_IMAGE},format=${VM_IMAGE_FORMAT} --os-variant=rhel9.4 --network bridge=${NET_ETH0},model=virtio --graphics vnc,listen=0.0.0.0 --noautoconsole
+virt-install --name=${VM_HOSTNAME} --boot uefi --ram=4096 --vcpus=2 --import --disk path=${VM_IMAGE},format=qcow2 --os-variant=rhel9.4 --network bridge=${NET_ETH0},model=virtio --graphics vnc,listen=0.0.0.0 --noautoconsole
             </code>
             </pre>
             <li>Log into director as root (default password: <code>p4ssw0rd1;</code>)</li>
