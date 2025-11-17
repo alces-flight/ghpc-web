@@ -1,7 +1,11 @@
 <section class="wrapper style2" id="get-started">
     <div class="inner">
         <h2 class="align-center">Get Started with {{ .Site.Params.version }}</h2>
-        <p>Ensure your platform is ready for appliance deployment, to be prepared you will need a libvirt virtualisation host.</p>
+        <h3>Prerequisites</h3>
+        <p>Ensure your platform is ready for appliance deployment, to be prepared you will need a libvirt virtualisation host with physical connections to your "Site" network and "Primary" network.</p>
+        <p><b>The "Site" network:</b> This gives access to the rest of your Site or even to the Internet depending on your organisation's setup. The <i>Director</i> VM and <i>Login</i> nodes are connected to it and this is how they are accessed.</p>
+        <p><b>The "Primary" network:</b> This is the network the director, domain and cluster nodes are all connected to. Its separated by subnet (10.178.0.0/19 for Site connections, 10.10.0.0/19 for Clusters) but must be 1 physical network.</p>
+        <h3>Method</h3>
         <ol>
             <li>Download the Director & Domain appliance images below to <code>/data/ghpc-source/</code> on your VM host</li>
             <ul class="actions">
