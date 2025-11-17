@@ -18,3 +18,13 @@ Params:
       - css/fontawesome-all.min.css
     fontawesome_js:
       - js/fontawesome-all.min.js
+  plausible:
+    enable: true
+    domain: "ghpc.openflighthpc.org"
+    selfhosted_domain: "plausible.concertim.com"
+module:
+  hugoVersion:
+    extended: true
+    min: 0.80.0
+  imports:
+    - path: github.com/divinerites/plausible-hugo
