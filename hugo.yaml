@@ -8,7 +8,7 @@ disableKinds:
   - taxonomy
   - section
 Params:
-  version: "v1.2"
+  version: "v1.3"
   description: "An HPC/AI stack deployment built on open methodologies"
   logo: images/banner.jpg
   favicon: false
