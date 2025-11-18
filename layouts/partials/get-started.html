@@ -21,8 +21,8 @@ DOMAIN=$SITENAME.network
 VM_HOSTNAME=director.$DOMAIN
 VM_IMAGE=/data/$SITENAME/director-root.qcow2
 DATA_IMAGE=/data/$SITENAME/director-data.qcow2
-NET_ETH0=virbr3 # Host Bridge interface for External Network
-NET_ETH1=virbr2 # Host Bridge interface for GHPC Network
+NET_ETH0=virbr3 # Host Bridge interface for GHPC Network
+NET_ETH1=virbr2 # Host Bridge interface for External Network
 
 mkdir -p $(dirname $VM_IMAGE)
 
