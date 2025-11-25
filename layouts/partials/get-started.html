@@ -7,29 +7,27 @@
         <p><b>The "GHPC" network:</b> This is the network the director, domain and all cluster systems are connected to. It's separated by subnet (10.178.0.0/19 for admin connections (Director, Domain, Controllers), 10.10.0.0/19 for Clusters) but must be 1 physical network.</p>
         <h3>Method</h3>
         <ol>
-            <li>Download the Director & Domain appliance images below to <code>/data/ghpc-source/</code> on your VM host</li>
+            <li>Download both the Director & Domain appliance images below to <code>/data/ghpc-source/</code> on your VM host</li>
             <ul class="actions">
-                <li><a href="/download/{{ .Site.Params.version }}/director-root.qcow2" class="button primary">Director (Disk Image)</a></li>
-                <li><a href="/download/{{ .Site.Params.version }}/director-data.qcow2" class="button primary">Director (Data Image)</a></li>
-                <li><a href="/download/{{ .Site.Params.version }}/domain-root.qcow2" class="button primary">Domain (Disk Image)</a></li>
+                <li><a href="https://repo.openflighthpc.org/ghpc/{{ .Site.Params.version }}/director.qcow2" class="button primary">Director (Disk Image)</a></li>
+                <li><a href="https://repo.openflighthpc.org/ghpc/{{ .Site.Params.version }}/domain.qcow2" class="button primary">Domain (Disk Image)</a></li>
             </ul>
+            <blockquote>The Director image is especially large (~50GB) and therefore it's recommended to download it using a combination of <code>screen</code> and <code>wget</code> to ensure it is less likely to be disrupted. For example <code>screen -dm wget -O /data/ghpc-source/director.qcow2 https://repo.openflighthpc.org/ghpc/{{ .Site.Params.version }}/director.qcow2</code></blockquote>
             <li>Launch Director VM</li>
             <pre>
             <code>
 SITENAME=mysite
 DOMAIN=$SITENAME.network
 VM_HOSTNAME=director.$DOMAIN
-VM_IMAGE=/data/$SITENAME/director-root.qcow2
-DATA_IMAGE=/data/$SITENAME/director-data.qcow2
+VM_IMAGE=/data/$SITENAME/director.qcow2
 NET_ETH0=virbr3 # Host Bridge interface for GHPC Network
 NET_ETH1=virbr2 # Host Bridge interface for External Network
 
 mkdir -p $(dirname $VM_IMAGE)
 
-cp /data/ghpc-source/director-root.qcow2 $VM_IMAGE
-cp /data/ghpc-source/director-data.qcow2 $DATA_IMAGE
+cp /data/ghpc-source/director.qcow2 $VM_IMAGE
 
-virt-install --name=${VM_HOSTNAME} --boot uefi --ram=2048 --vcpus=1 --import --disk path=${VM_IMAGE},format=qcow2 --disk path=${DATA_IMAGE},format=qcow2 --os-variant=rhel9.4 --network bridge=${NET_ETH0},model=virtio --network bridge=${NET_ETH1},model=virtio --graphics vnc,listen=0.0.0.0 --noautoconsole
+virt-install --name=${VM_HOSTNAME} --boot uefi --ram=2048 --vcpus=1 --import --disk path=${VM_IMAGE},format=qcow2 --os-variant=rhel9.4 --network bridge=${NET_ETH0},model=virtio --network bridge=${NET_ETH1},model=virtio --graphics vnc,listen=0.0.0.0 --noautoconsole
             </code>
             </pre>
             <li>Launch Domain (requires at least 2 cores and 4GB RAM)</li>
@@ -38,10 +36,10 @@ virt-install --name=${VM_HOSTNAME} --boot uefi --ram=2048 --vcpus=1 --import --d
 SITENAME=mysite
 DOMAIN=$SITENAME.network
 VM_HOSTNAME=domain.$DOMAIN
-VM_IMAGE=/data/$SITENAME/domain-root.qcow2
+VM_IMAGE=/data/$SITENAME/domain.qcow2
 NET_ETH0=virbr3 # Host Bridge interface for GHPC Network
 
-cp /data/ghpc-source/domain-root.qcow2 $VM_IMAGE
+cp /data/ghpc-source/domain.qcow2 $VM_IMAGE
 
 virt-install --name=${VM_HOSTNAME} --boot uefi --ram=4096 --vcpus=2 --import --disk path=${VM_IMAGE},format=qcow2 --os-variant=rhel9.4 --network bridge=${NET_ETH0},model=virtio --graphics vnc,listen=0.0.0.0 --noautoconsole
             </code>
