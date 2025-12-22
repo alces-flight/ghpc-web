@@ -1,8 +1,43 @@
 <section class="wrapper style2" id="get-started">
     <div class="inner">
-        <h2 class="align-center">Get Started with {{ .Site.Params.version }}</h2>
+        <h1 class="align-center">Get Started with {{ .Site.Params.version }}</h1>
+        <p>GHPC has both an example and a regular deployment. Read on to find more about each method to determine the best for you.</p>
+        <h2>Example Deployment</h2>
+        <p>GHPC has the option of doing an "Example Deployment" which empowers a quick preview of the GHPC stack. For regular deployments, scroll down past these instructions.</p>
+        <p>The Example Deployment creates a Director, Domain, Cluster Controller, Cluster Login and 2 Cluster Computes nodes all as VMS entirely within the VM host.</p>
         <h3>Prerequisites</h3>
-        <p>Ensure your platform is ready for appliance deployment, to be prepared you will need a libvirt virtualisation host with physical connections to your "Site" network and "Primary" network.</p>
+        <p>Ensure your platform is ready for appliance deployment. We recommend having at least 50GB of available disk space in your libvirt root directory and at least 10 cores & 32GB RAM available/unused for VMs.</p>
+        <h3>Method</h3>
+        <p>To create an Example Deployment run our quickstart script which will:</p>
+        <ol>
+            <li>Download the Director & Domain images</li>
+            <li>Launch the Director & Domain</li>
+            <li>Preconfigure the Site & Cluster Information</li>
+            <li>Create VMs for Cluster Controller, Login & Compute Nodes</li>
+        </ol>
+        <p>Run the below script on your VM host as a user with permission to create resources</p>
+        <pre>
+        <code>
+curl -L https://repo.openflighthpc.org/ghpc/{{ .Site.Params.version }}/ghpc-example.sh |/bin/bash
+        </code>
+        </pre>
+        <p>Once complete the stack can be accessed from the VM host (default password: <code>p4ssw0rd1;</code>):</p>
+        <ul>
+            <li>As a site admin to the Director: <code>ssh root@192.168.37.10</code> and begin modifying diskless images and managing IPA (on Domain)</li>
+            <li>As a cluster admin to the Demo Cluster Controller (via the Demo Cluster Login) to begin managing the SLURM scheduler:</li>
+                <pre>
+                <code>
+ssh demoadmin@192.168.37.20
+    ssh controller
+                </code>
+                </pre>
+            <li>As a cluster user to the Demo Cluster Login: <code>ssh demouser@192.168.37.20</code> and begin using the SLURM scheduler:</li>
+        </ul>
+        <p><b>The Example Deployment should not be used beyond review/testing</b></p>
+        <h2>Regular Deployment</h2>
+        <p>The regular deployment of GHPC is intended for creating a diskless cluster stack of bare metal machines. This deployment prepares your VM host with the appliances needed to manage and deploy these resources.</p>
+        <h3>Prerequisites</h3>
+        <p>Ensure your platform is ready for appliance deployment, to be prepared you will need a libvirt virtualisation host with physical connections to your "Site" network and "Primary" network. We recommend having at least 50GB of available disk space in your libvirt root directory and at least 4 cores & 8GB RAM available/unused for VMs.</p>
         <p><b>The "External" network:</b> This gives access to the rest of your site or even to the Internet depending on your organisation's setup. The <i>Director</i> VM and <i>Login</i> nodes are connected to it and this is how they are accessed.</p>
         <p><b>The "GHPC" network:</b> This is the network the director, domain and all cluster systems are connected to. It's separated by subnet (10.178.0.0/19 for admin connections (Director, Domain, Controllers), 10.10.0.0/19 for Clusters) but must be 1 physical network.</p>
         <h3>Method</h3>
