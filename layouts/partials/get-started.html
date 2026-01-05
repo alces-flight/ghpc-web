@@ -34,6 +34,13 @@ ssh demoadmin@192.168.37.20
             <li>As a cluster user to the Demo Cluster Login: <code>ssh demouser@192.168.37.20</code> and begin using the SLURM scheduler:</li>
         </ul>
         <p><b>The Example Deployment should not be used beyond review/testing</b></p>
+        <p>To delete/remove the Example Deployment simply run the script with the <code>--destroy</code> argument, such as:
+        <pre>
+        <code>
+curl -L https://repo.openflighthpc.org/ghpc/{{ .Site.Params.version }}/ghpc-example.sh |/bin/bash -s -- --destroy
+        </code>
+        </pre>
+        </p>
         <h2>Regular Deployment</h2>
         <p>The regular deployment of GHPC is intended for creating a diskless cluster stack of bare metal machines. This deployment prepares your VM host with the appliances needed to manage and deploy these resources.</p>
         <h3>Prerequisites</h3>
