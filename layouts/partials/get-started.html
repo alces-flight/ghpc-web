@@ -37,7 +37,7 @@ ssh demoadmin@192.168.37.20
         <h2>Regular Deployment</h2>
         <p>The regular deployment of GHPC is intended for creating a diskless cluster stack of bare metal machines. This deployment prepares your VM host with the appliances needed to manage and deploy these resources.</p>
         <h3>Prerequisites</h3>
-        <p>Ensure your platform is ready for appliance deployment, to be prepared you will need a libvirt virtualisation host with physical connections to your "Site" network and "Primary" network. We recommend having at least 50GB of available disk space in your libvirt root directory and at least 4 cores & 8GB RAM available/unused for VMs.</p>
+        <p>Ensure your platform is ready for appliance deployment, to be prepared you will need a libvirt virtualisation host with physical connections to your "External" network and "Cluster" network. Make a note of the bridge names for each network on your libvirt host, as these will be required during setup. We recommend having at least 50GB of available disk space in your libvirt root directory and at least 4 cores & 8GB RAM available/unused for VMs.</p>
         <p><b>The "External" network:</b> This gives access to the rest of your site or even to the Internet depending on your organisation's setup. The <i>Director</i> VM and <i>Login</i> nodes are connected to it and this is how they are accessed.</p>
         <p><b>The "GHPC" network:</b> This is the network the director, domain and all cluster systems are connected to. It's separated by subnet (10.178.0.0/19 for admin connections (Director, Domain, Controllers), 10.10.0.0/19 for Clusters) but must be 1 physical network.</p>
         <h3>Method</h3>
@@ -47,42 +47,23 @@ ssh demoadmin@192.168.37.20
                 <li><a href="https://repo.openflighthpc.org/ghpc/{{ .Site.Params.version }}/director.qcow2" class="button primary">Director (Disk Image)</a></li>
                 <li><a href="https://repo.openflighthpc.org/ghpc/{{ .Site.Params.version }}/domain.qcow2" class="button primary">Domain (Disk Image)</a></li>
             </ul>
-            <blockquote>The Director image is especially large (~50GB) and therefore it's recommended to download it using a combination of <code>screen</code> and <code>wget</code> to ensure it is less likely to be disrupted. For example <code>screen -dm wget -O /data/ghpc-source/director.qcow2 https://repo.openflighthpc.org/ghpc/{{ .Site.Params.version }}/director.qcow2</code></blockquote>
+            <blockquote>The Director image is especially large (~20GB) and therefore it's recommended to download it using a combination of <code>screen</code> and <code>wget</code> to ensure it is less likely to be disrupted. For example <code>screen -dm wget -O /opt/vm/ghpc/director.qcow2 https://repo.openflighthpc.org/ghpc/{{ .Site.Params.version }}/director.qcow2</code></blockquote>
             <li>Launch Director VM</li>
             <pre>
             <code>
-SITENAME=mysite
-DOMAIN=$SITENAME.network
-VM_HOSTNAME=director.$DOMAIN
-VM_IMAGE=/data/$SITENAME/director.qcow2
-NET_ETH0=virbr3 # Host Bridge interface for GHPC Network
-NET_ETH1=virbr2 # Host Bridge interface for External Network
-
-mkdir -p $(dirname $VM_IMAGE)
-
-cp /data/ghpc-source/director.qcow2 $VM_IMAGE
-
-virt-install --name=${VM_HOSTNAME} --boot uefi --ram=2048 --vcpus=1 --import --disk path=${VM_IMAGE},format=qcow2 --os-variant=rhel9.4 --network bridge=${NET_ETH0},model=virtio --network bridge=${NET_ETH1},model=virtio --graphics vnc,listen=0.0.0.0 --noautoconsole
+CLUSTER_NET=clusterbr # Host bridge name for your Cluster Network
+EXT_NET=extbr # Host Bridge name for your External Network
+virt-install --name=ghpc-director --boot uefi --ram=4096 --vcpus=2 --import --disk path=/opt/vm/ghpc/director.qcow2,format=qcow2 --os-variant=rocky9 --network bridge=${CLUSTER_NET},model=virtio --network bridge=${EXT_NET},model=virtio --noautoconsole
             </code>
             </pre>
             <li>Launch Domain (requires at least 2 cores and 4GB RAM)</li>
             <pre>
             <code>
-SITENAME=mysite
-DOMAIN=$SITENAME.network
-VM_HOSTNAME=domain.$DOMAIN
-VM_IMAGE=/data/$SITENAME/domain.qcow2
-NET_ETH0=virbr3 # Host Bridge interface for GHPC Network
-
-cp /data/ghpc-source/domain.qcow2 $VM_IMAGE
-
-virt-install --name=${VM_HOSTNAME} --boot uefi --ram=4096 --vcpus=2 --import --disk path=${VM_IMAGE},format=qcow2 --os-variant=rhel9.4 --network bridge=${NET_ETH0},model=virtio --graphics vnc,listen=0.0.0.0 --noautoconsole
+CLUSTER_NET=clusterbr # Host bridge name for your Cluster Network
+virt-install --name=ghpc-domain --boot uefi --ram=4096 --vcpus=2 --import --disk path=/opt/vm/ghpc/domain.qcow2,format=qcow2 --os-variant=rocky9 --network bridge=${CLUSTER_NET},model=virtio --noautoconsole
             </code>
             </pre>
-            <li>Log into director as root (default password: <code>p4ssw0rd1;</code>)</li>
-            <ul>
-                <li>Can locate DHCP IP on <code>ext</code> network (replace <code>ext</code> with the name of your external libvirt network) of VM with <code>virsh net-dhcp-leases ext</code> (might need to cross reference with MAC address of VM interface shown in <code>virsh domiflist $VM_HOSTNAME</code>)
-            </ul>
+            <li>Log into director as root (default password: <code>p4ssw0rd1;</code>). The director is configured to DHCP on the external network, so you'll need to identify the address its been given by your DHCP server. Either refer to your DHCP server or login using the `virsh console ghpc-director` command to identify the correct IP address.</li>
             <li>Read the embedded docs</li>
             <pre>
             <code>
